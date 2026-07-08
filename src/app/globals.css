@@ -126,5 +126,46 @@
   }
   html {
     @apply font-sans;
+@config "../../tailwind.config.ts";
+
+:root {
+  --rr-bg: #0b0f1a;
+  --rr-surface: #121826;
+  --rr-signal: #34f5a2;
+  --rr-accent: #8b7cff;
+  --rr-text: #e7ecf5;
+  --rr-muted: #7c8698;
+}
+
+html.light {
+  --rr-bg: #f7f8fb;
+  --rr-surface: #ffffff;
+  --rr-signal: #0e9f6e;
+  --rr-accent: #6d5ef8;
+  --rr-text: #0f172a;
+  --rr-muted: #64748b;
+}
+
+html {
+  color-scheme: dark;
+  overflow-x: hidden;
+} 
+
+html.light {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--rr-bg);
+  color: var(--rr-text);
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
