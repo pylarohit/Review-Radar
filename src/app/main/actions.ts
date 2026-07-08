@@ -9,5 +9,7 @@ export async function startAnalysis(productUrl: string) {
   }
 
   const analysisId = crypto.randomUUID();
-  redirect(`/analysis/${analysisId}?url=${encodeURIComponent(productUrl)}`);
+ return {
+    id: analysisId,
+  };
 }
