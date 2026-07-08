@@ -19,16 +19,10 @@ export default function Hero() {
 
         <div className="mt-10 flex flex-col gap-4 sm:flex-row">
           <Link
-            href="/signup"
+            href="/dashboard"
             className="rounded-xl bg-[var(--rr-signal)] px-8 py-4 text-base font-semibold text-[var(--rr-bg)] transition-all hover:brightness-110 hover:shadow-[0_0_24px_-4px_var(--rr-signal)]"
           >
             Get started free
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-xl border border-white/10 px-8 py-4 text-base font-semibold text-[var(--rr-text)] transition-colors hover:border-[var(--rr-signal)]/50"
-          >
-            I already have an account
           </Link>
         </div>
       </div>
