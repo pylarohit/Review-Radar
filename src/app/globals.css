@@ -117,15 +117,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
 @config "../../tailwind.config.ts";
 
 :root {
@@ -149,17 +140,25 @@ html.light {
 html {
   color-scheme: dark;
   overflow-x: hidden;
-} 
+  @apply font-sans;
+}
 
 html.light {
   color-scheme: light;
 }
 
 body {
+  @apply bg-background text-foreground;
   background-color: var(--rr-bg);
   color: var(--rr-text);
   overflow-x: hidden;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
