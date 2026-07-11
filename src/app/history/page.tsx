@@ -1,8 +1,15 @@
 import Navbar from "@/components/ui/Navbar";
 import ProductAnalyzer from "@/components/ui/Productanalyzer";
 import AppFooter from "@/components/ui/Footer";
+import { getSessionUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function HistoryPage() {
+export default async function HistoryPage() {
+  const session = await getSessionUser();
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <main className="min-h-screen bg-[#fafbfc] text-zinc-900 relative overflow-hidden flex flex-col justify-between">
       <div className="flex-1 w-full">
@@ -12,7 +19,7 @@ export default function HistoryPage() {
           aria-hidden="true"
         />
 
-        <Navbar />
+        <Navbar userName={session.name} userEmail={session.email} />
 
         <section className="relative mx-auto max-w-6xl px-6 py-20 z-10">
           <ProductAnalyzer />
@@ -23,3 +30,4 @@ export default function HistoryPage() {
     </main>
   );
 }
+

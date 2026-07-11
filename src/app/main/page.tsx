@@ -1,17 +1,18 @@
 import Navbar from "@/components/main/Navbar";
 import AnalyzeCard from "@/components/main/AnalyzeCard";
 import RadarScope from "@/components/ui/RadarScope";
-
-async function getCurrentUser() {
-  return { name: "Inshu", avatarUrl: undefined as string | undefined };
-}
+import { getSessionUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function MainPage() {
-  const user = await getCurrentUser();
+  const session = await getSessionUser();
+  if (!session) {
+    redirect("/login");
+  }
 
   return (
     <div className="min-h-screen bg-[var(--rr-bg)]">
-      <Navbar userName={user.name} avatarUrl={user.avatarUrl} />
+      <Navbar userName={session.name} />
 
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pt-16 sm:px-6">
         <RadarScope />
@@ -38,3 +39,4 @@ export default async function MainPage() {
     </div>
   );
 }
+

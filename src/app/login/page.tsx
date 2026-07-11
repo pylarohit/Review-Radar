@@ -3,5 +3,9 @@
 export const metadata = { title: "Log In — Review Radar" };
 
 export default function LoginPage() {
-  return <AuthForm mode="login" />;
+  return(
+    <>
+    <AuthForm mode="login" />
+    </>
+  )
 }

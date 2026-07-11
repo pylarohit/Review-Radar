@@ -1,5 +1,6 @@
-import React from "react";
 import { Radar } from "lucide-react";
+import React from "react";
+
 
 interface FooterProps {
   logo: React.ReactNode;
@@ -159,8 +160,8 @@ export default function AppFooter() {
   };
 
   const logo = (
-    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-violet-600 text-white shadow-sm shadow-indigo-500/20">
-      <Radar className="w-4 h-4" />
+    <div className="flex items-center justify-center">
+      <img src="/darkLogo.png" alt="ReviewRadar" className="w-16 h-12" />
     </div>
   );
 

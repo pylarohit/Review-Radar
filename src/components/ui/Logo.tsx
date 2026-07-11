@@ -28,6 +28,7 @@ export default function Logo() {
       alt="ReviewRadar Logo"
       width={78}
       height={68}
+      style={{ height: "auto" }}
       priority
     />
   );

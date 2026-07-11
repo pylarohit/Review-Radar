@@ -1,11 +1,21 @@
 import Navbar from "@/components/ui/Navbar";
 import DashboardView from "@/components/ui/DashboardView";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const revalidate = 0;
 
 export default async function DashboardPage() {
+    const session = await getSessionUser();
+    if (!session) {
+        redirect("/login");
+    }
+
     const products = await prisma.product.findMany({
+        where: {
+            userId: session.userId,
+        },
         include: {
             reviews: true,
             analyses: true,
@@ -23,11 +33,11 @@ export default async function DashboardPage() {
                 aria-hidden="true"
             />
 
-            <Navbar />
+            <Navbar userName={session.name} userEmail={session.email} />
 
             <div className="flex-1 flex overflow-hidden z-10">
                 <DashboardView products={products} />
             </div>
         </main>
     );
-}
+}

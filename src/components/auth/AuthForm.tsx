@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -11,7 +11,7 @@ import Logo from "@/components/ui/Logo";
 function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") || "/main";
+  const next = searchParams.get("next") || "/dashboard";
   const isSignup = mode === "signup";
 
   const [name, setName] = useState("");
@@ -20,6 +20,15 @@ function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const remembered = localStorage.getItem("rr_remembered_email");
+    if (remembered) {
+      setEmail(remembered);
+      setRememberMe(true);
+    }
+  }, []);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
@@ -54,6 +63,16 @@ function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
         toast.error(data.message || "Something went wrong");
         setLoading(false);
         return;
+      }
+
+      // Save user details to localStorage for client-side state / dynamic header
+      localStorage.setItem("rr_user", JSON.stringify(data.user));
+
+      // Handle remember me logic
+      if (rememberMe) {
+        localStorage.setItem("rr_remembered_email", email);
+      } else {
+        localStorage.removeItem("rr_remembered_email");
       }
 
       toast.success(isSignup ? "Account created!" : "Welcome back!");
@@ -141,6 +160,18 @@ function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
             {errors.password && (
               <p className="mt-1 text-xs text-red-400">{errors.password}</p>
             )}
+          </div>
+
+          <div className="flex items-center justify-between py-1">
+            <label className="flex items-center gap-2.5 text-sm text-[var(--rr-muted)] hover:text-[var(--rr-text)] cursor-pointer select-none transition-colors">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4.5 w-4.5 rounded-lg border border-white/10 bg-black/20 checked:bg-[var(--rr-signal)] text-[var(--rr-signal)] outline-none focus:ring-1 focus:ring-[var(--rr-signal)] accent-[var(--rr-signal)] transition-all cursor-pointer"
+              />
+              Remember me
+            </label>
           </div>
 
           <button

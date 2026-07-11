@@ -3,5 +3,5 @@
 export const metadata = { title: "Sign Up — Review Radar" };
 
 export default function SignupPage() {
-  return <AuthForm mode="signup" />;
+  return<AuthForm mode="signup" />;
 }
