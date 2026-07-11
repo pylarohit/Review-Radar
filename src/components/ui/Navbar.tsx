@@ -1,11 +1,58 @@
 "use client";
 
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { User, LogOut } from "lucide-react";
 
-export default function Navbar() {
+interface NavbarProps {
+  userName?: string;
+  userEmail?: string;
+}
+
+export default function Navbar({ userName, userEmail }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [displayUser, setDisplayUser] = useState({
+    name: userName || "",
+    email: userEmail || "",
+  });
+
+  useEffect(() => {
+    if (!userName) {
+      const stored = localStorage.getItem("rr_user");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setDisplayUser({
+            name: parsed.name || "",
+            email: parsed.email || "",
+          });
+        } catch (e) {
+          console.error("Failed to parse rr_user from localStorage", e);
+        }
+      }
+    } else {
+      setDisplayUser({
+        name: userName,
+        email: userEmail || "",
+      });
+    }
+  }, [userName, userEmail]);
+
+  function handleLogout() {
+    startTransition(async () => {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+        localStorage.removeItem("rr_user");
+        router.push("/");
+        router.refresh();
+      } catch (err) {
+        console.error("Logout failed:", err);
+      }
+    });
+  }
 
   return (
     <header className="border-b border-zinc-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
@@ -61,9 +108,11 @@ export default function Navbar() {
 
             {/* Profile info */}
             <div className="flex flex-col text-left">
-              <span className="text-sm font-bold text-zinc-800 leading-tight">Pratik</span>
+              <span className="text-sm font-bold text-zinc-800 leading-tight">
+                {displayUser.name || "User"}
+              </span>
               <span className="text-[10px] font-bold text-zinc-400 tracking-wider uppercase mt-0.5">
-                EMPLOYEE
+                {displayUser.email ? "MEMBER" : "GUEST"}
               </span>
             </div>
           </div>
@@ -72,14 +121,15 @@ export default function Navbar() {
 
           {/* Logout button */}
           <button
-            onClick={() => console.log("Logout")}
-            className="flex items-center gap-1.5 rounded-xl bg-red-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-700 shadow-sm shadow-red-500/10 active:scale-[0.98] transition-all cursor-pointer"
+            onClick={handleLogout}
+            disabled={isPending}
+            className="flex items-center gap-1.5 rounded-xl bg-red-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-700 shadow-sm shadow-red-500/10 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
           >
             <LogOut className="h-3.5 w-3.5" />
-            Logout
+            {isPending ? "Logging out..." : "Logout"}
           </button>
         </div>
       </nav>
     </header>
   );
-}
+}

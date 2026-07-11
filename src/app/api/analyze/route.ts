@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -121,16 +122,13 @@ export async function POST(request: Request) {
     // Parse the JSON returned by Gemini
     const parsedData = JSON.parse(cleanText.trim());
 
-    // 1. Get or create a default user to own the product
-    let user = await prisma.user.findFirst();
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: "Pratik",
-          email: "pratik@example.com",
-          password: "dummy_password_hash",
-        },
-      });
+    // 1. Get user from session
+    const session = await getSessionUser();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized. Please log in first." },
+        { status: 401 }
+      );
     }
 
     // 2. Create Product record
@@ -140,7 +138,7 @@ export async function POST(request: Request) {
         category: parsedData.category || "General",
         description: parsedData.description || "",
         productUrl: productUrl,
-        userId: user.id,
+        userId: session.userId,
       },
     });
 
