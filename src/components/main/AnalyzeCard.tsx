@@ -27,8 +27,7 @@ export default function AnalyzeCard() {
     setError(null);
     startTransition(async () => {
       try {
-        const { id } = await startAnalysis(url.trim());
-        router.push(`/analysis/${id}`);
+        await startAnalysis(url.trim());
       } catch {
         setError("Something went wrong starting the analysis. Please try again.");
       }
