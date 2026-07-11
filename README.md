@@ -1,253 +1,113 @@
-██████╗ ███████╗██╗   ██╗██╗███████╗██╗    ██╗    ██████╗  █████╗ ██████╗  █████╗ ██████╗ 
-██╔══██╗██╔════╝██║   ██║██║██╔════╝██║    ██║    ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗
-██████╔╝█████╗  ██║   ██║██║█████╗  ██║ █╗ ██║    ██████╔╝███████║██║  ██║███████║██████╔╝
-██╔══██╗██╔══╝  ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║    ██╔══██╗██╔══██║██║  ██║██╔══██║██╔══██╗
-██║  ██║███████╗ ╚████╔╝ ██║███████╗╚███╔███╔╝    ██║  ██║██║  ██║██████╔╝██║  ██║██║  ██║
-╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
-AI-Powered Product Review Sentiment Analyzer
-Personalized. Intelligent. Instant.
+# 🔍 Review Radar
 
-Next.js TypeScript Prisma MongoDB Gemini AI TailwindCSS
+**AI-Powered Product Review Analysis Platform**
 
-✦ What is Review Radar?
-Review Radar is an intelligent product analysis platform that automatically fetches, extracts, and summarizes customer reviews from any product URL. Powered by Gemini AI, it generates a comprehensive sentiment score, breakdowns of pros and cons, synthesizes key opinion highlights, and produces realistic verified purchase reviews.
+Review Radar is a full-stack web application that helps users analyze product reviews, understand customer sentiment, identify common pros and cons, and manage previously analyzed products through a personalized dashboard.
 
-Whether you're shopping online, looking for genuine customer feedback, or analyzing competitor products — Review Radar saves you time by cutting straight through the noise to deliver the insights that matter.
+Built with **Next.js, TypeScript, Prisma, MongoDB, Gemini AI, and Tailwind CSS**.
 
-✦ Core Features
-🧠 AI Sentiment Analysis
-Powered by the Gemini 2.5 Flash API. Review Radar parses product pages and synthesizes customer opinions, providing an exact percentage split of Positive, Neutral, and Negative sentiments.
+---
 
-🗺️ Interactive Dashboard
-A modern, dynamic user dashboard showing all your analyzed products. Filter by categories, search through previous scans, view comprehensive analysis reports, and browse individual AI-synthesized verified reviews.
+## ✨ Overview
 
-🎯 Category-specific Highlights
-Highlights key pros and cons in an intuitive side-by-side card list, letting you instantly evaluate a product's main selling points and potential deal-breakers.
+Online products can have hundreds or thousands of customer reviews, making it difficult for users to understand the overall customer opinion.
 
-🔐 Secure Custom Authentication
-Includes custom password hashing (`bcryptjs`), JWT-based secure sessions, cookie verification middleware, and a sleek "Remember Me" email auto-fill flow for rapid next-time logins.
+Review Radar simplifies this process by using AI to generate structured product insights such as:
 
-📊 User-specific Data Isolation
-Each product scan is tied to the authenticated user's profile, ensuring that your dashboard contains only the products and reports that you care about.
+- Overall sentiment
+- Positive, neutral, and negative percentages
+- Executive summary
+- Common pros and cons
+- Review-level sentiment
+- Personalized analysis history
 
-✦ Tech Stack
-| Layer | Technology |
-| --- | --- |
-| **Framework** | Next.js 16 (App Router) |
-| **Language** | TypeScript |
-| **Database** | MongoDB (via Prisma ORM) |
-| **AI Integration** | Gemini 2.5 Flash API (Google Generative AI) |
-| **Styling** | TailwindCSS v4 + Vanilla CSS Variables |
-| **Authentication** | Custom JWT Session Cookies (`jose`) + Password Hashing (`bcryptjs`) |
-| **Icons** | Lucide React |
-| **Notifications** | React Hot Toast |
+Each analyzed product is associated with the authenticated user, allowing users to access only their own product analysis data.
 
-✦ Architecture
-┌─────────────────────────────────────────────────────────────┐
-│                    Review Radar Platform                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   Next.js App Router                                        │
-│   ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐     │
-│   │  Landing    │  │  Dashboard  │  │ History/Scanner │     │
-│   └──────┬──────┘  └──────┬──────┘  └────────┬────────┘     │
-│          │                │                   │             │
-│   ┌──────▼──────────────────────────────────▼───────────┐   │
-│   │           Next.js Server Actions & API Routes       │   │
-│   └──────────────────────┬──────────────────────────────┘   │
-│                           │                                 │
-│   ┌───────────────────────▼──────────────────────────────┐  │
-│   │                Prisma Client & Middleware            │  │
-│   └──┬────────────┬──────────────────┬───────────────────┘  │
-│      │            │                  │                      │
-│   ┌──▼───┐  ┌─────▼─────┐   ┌───────▼───────┐               │
-│   │ Auth │  │ Gemini AI │   │ MongoDB Atlas │               │
-│   │      │  │ API Key   │   │  Database     │               │
-│   └──┬───┘  └─────┬─────┘   └───────┬───────┘               │
-│      │            │                  │                      │
-│   ┌──▼────────────▼──────────────────▼───────────────────┐  │
-│   │                  Client localStorage                 │  │
-│   │              (User State & Prefill Email)            │  │
-│   └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+---
 
-✦ Project Structure
-review-radar/
-├── prisma/
-│   └── schema.prisma        # Database schema definitions
-├── public/
-│   ├── darkLogo.png         # Light-theme compatible logo
-│   └── lightLogo.png        # Dark-theme compatible logo
-├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── analyze/
-│   │   │   │   └── route.ts  # Gemini review extraction API
-│   │   │   ├── auth/
-│   │   │   │   ├── login/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── logout/
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── signup/
-│   │   │   │       └── route.ts
-│   │   │   └── products/
-│   │   │   │   └── route.ts
-│   │   │   └── reviews/
-│   │   │       └── route.ts
-│   │   ├── dashboard/
-│   │   │   └── page.tsx      # Main dashboard page
-│   │   ├── history/
-│   │   │   └── page.tsx      # History / new review analysis trigger
-│   │   ├── login/
-│   │   │   └── page.tsx      # Login form router page
-│   │   ├── signup/
-│   │   │   └── page.tsx      # Signup page
-│   │   ├── globals.css       # Core design tokens and imports
-│   │   ├── layout.tsx        # Base page layout with Toast notifications
-│   │   └── page.tsx          # Default landing home page
-│   │
-│   ├── components/
-│   │   ├── auth/
-│   │   │   └── AuthForm.tsx  # Shared Auth login/signup with Remember Me
-│   │   ├── landing/          # Core landing page items (Hero, Navbar, Footer)
-│   │   ├── main/             # Profile menu, logout button, layout elements
-│   │   └── ui/               # Primary components (DashboardView, Logo, Navbar, ProductAnalyzer)
-│   │
-│   └── lib/
-│       ├── auth.ts           # Token verification & JWT helpers
-│       ├── prisma.ts         # Prisma client singleton
-│       └── utils.ts          # Utility classes (cn, etc.)
-├── middleware.ts             # Auth check and route protection middleware
-├── package.json
-└── tailwind.config.ts
+## 🚀 Features
 
-✦ Gemini Integration
-Review Radar uses the Gemini API to analyze URLs and return structured JSON conforming to a specific database schema.
+### 🧠 AI-Powered Review Analysis
 
-```typescript
-// src/app/api/analyze/route.ts
-const prompt = `
-  You are a professional product reviewer and sentiment analyst.
-  Analyze the following product URL and synthesize customer feedback and reviews.
-  Product URL: "${productUrl}"
+Review Radar integrates Gemini AI to process product information and review data and return structured analysis results.
 
-  Please generate a realistic set of customer reviews, pros, cons, and overall sentiment analysis.
-  You must respond with raw JSON only.
-  
-  The JSON must strictly conform to the following schema:
-  {
-    "name": "Detailed Product Name",
-    "category": "A single word category name",
-    "description": "A concise overview.",
-    "overallSentiment": "Positive | Neutral | Negative | Mixed",
-    "positivePercent": 80,
-    "neutralPercent": 10,
-    "negativePercent": 10,
-    "summary": "Detailed summary...",
-    "pros": ["Pro 1", "Pro 2"],
-    "cons": ["Con 1", "Con 2"],
-    "reviews": [
-      {
-        "reviewer": "John Doe",
-        "rating": 5,
-        "reviewText": "Detailed feedback...",
-        "sentiment": "positive | neutral | negative"
-      }
-    ]
-  }
-`;
-```
+The generated analysis includes:
 
-✦ Getting Started
-### Prerequisites
-- Node.js 18+
-- MongoDB instance (local or Atlas)
-- Gemini API Key (obtain from Google AI Studio)
+- Overall sentiment
+- Positive sentiment percentage
+- Neutral sentiment percentage
+- Negative sentiment percentage
+- Product summary
+- Common advantages
+- Common disadvantages
+- Individual review sentiment
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/review-radar.git
-   cd review-radar
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up your environment variables by creating a `.env` file in the root:
-   ```env
-   DATABASE_URL="your_mongodb_connection_string"
-   JWT_SECRET="your_custom_jwt_secret_key"
-   GEMINI_API_KEY="your_gemini_api_key"
-   ```
+---
 
-### Database Setup
-1. Push the database schema to your MongoDB database using Prisma:
-   ```bash
-   npx prisma db push
-   ```
-2. Generate the Prisma Client library:
-   ```bash
-   npx prisma generate
-   ```
+### 📊 Personalized Dashboard
 
-### Run the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) to view the application in the browser.
+Authenticated users can access a dashboard containing their analyzed products.
 
-✦ Key Data Models
-Review Radar uses MongoDB via Prisma. Below are the key data models configured in `prisma/schema.prisma`:
+Users can:
 
-```prisma
-model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String    @unique
-  password  String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
+- Analyze a new product
+- View previously analyzed products
+- Search products
+- Filter products by category
+- Open detailed analysis reports
+- View sentiment results
+- Browse associated customer reviews
 
-model Product {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  category    String
-  description String?
-  imageUrl    String?
-  productUrl  String?
-  userId      String     @db.ObjectId
-  user        User       @relation(fields: [userId], references: [id])
-  reviews     Review[]
-  analyses    Analysis[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-}
+---
 
-model Review {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId  String   @db.ObjectId
-  product    Product  @relation(fields: [productId], references: [id])
-  reviewer   String?
-  rating     Float
-  reviewText String
-  sentiment  String?
-  createdAt  DateTime @default(now())
-}
-```
+### 🎯 Pros and Cons Analysis
 
-✦ Roadmap
-- [x] JWT Session Authentication Flow
-- [x] Remember Me Auto-fill login memory
-- [x] Gemini-powered Review Sentiment Scraper
-- [x] Responsive Dashboard Workspace & Categorization
-- [x] Multi-theme (Light/Dark mode) responsive support
-- [ ] Export analysis reports to PDF / Excel
-- [ ] Browser Extension for instant scanning directly on Amazon/eBay pages
-- [ ] Live charts & Graphs for sentiment historical tracking
-- [ ] Email alerts when a product's average score drops
+Review Radar summarizes recurring customer opinions into simple insights.
 
-✦ Contributing
-Contributions are welcome! Please open an issue or pull request to discuss potential changes.
+Users can quickly understand:
+
+**Pros**
+
+- Frequently appreciated product features
+- Positive customer experiences
+- Strong product qualities
+
+**Cons**
+
+- Common complaints
+- Product limitations
+- Frequently reported problems
+
+---
+
+### 🔐 Custom Authentication
+
+Review Radar includes a custom authentication system using:
+
+- Password hashing with `bcryptjs`
+- JWT session tokens using `jose`
+- HTTP cookies for session management
+- Protected application routes
+- User-specific database queries
+- Remember Me email prefill
+
+---
+
+### 👤 User-Specific Data Isolation
+
+Each product is associated with a user.
+
+The application filters database queries using the authenticated user's ID.
+
+```text
+User
+ │
+ ├── Product
+ │     ├── Reviews
+ │     └── Analysis
+ │
+ ├── Product
+ │     ├── Reviews
+ │     └── Analysis
+ │
+ └── Product
