@@ -111,3 +111,103 @@ User
  │     └── Analysis
  │
  └── Product
+
+| Layer             | Technology              |
+| ----------------- | ----------------------- |
+| Framework         | Next.js 16 (App Router) |
+| Language          | TypeScript              |
+| Frontend          | React                   |
+| Styling           | Tailwind CSS v4         |
+| Database          | MongoDB Atlas           |
+| ORM               | Prisma ORM              |
+| AI Integration    | Gemini API              |
+| Authentication    | JWT (`jose`)            |
+| Password Security | `bcryptjs`              |
+| Icons             | Lucide React            |
+| Notifications     | React Hot Toast         |
+
+
+                         USER
+                           │
+                           ▼
+                  Next.js Application
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+
+      Landing Page    Authentication     Dashboard
+                           │                │
+                           ▼                ▼
+                    Login / Signup    Product Analyzer
+                           │                │
+                           ▼                ▼
+                     JWT Session       API Routes
+                           │                │
+                           └──────┬─────────┘
+                                  │
+                                  ▼
+                           Server Logic
+                                  │
+                    ┌─────────────┼─────────────┐
+                    │             │             │
+                    ▼             ▼             ▼
+
+                 Prisma       Gemini API    Authentication
+                    │
+                    ▼
+              MongoDB Atlas
+                    │
+          ┌─────────┼─────────┐
+          │         │         │
+          ▼         ▼         ▼
+
+        Users    Products   Reviews
+                      │
+                      ▼
+                   Analysis
+
+
+⚙️ Getting Started
+Prerequisites
+
+Install the following:
+
+Node.js 18 or later
+npm
+Git
+MongoDB Atlas account or local MongoDB server
+Gemini API key
+
+
+
+
+1. Clone the Repository
+git clone <YOUR_REPOSITORY_URL>
+
+cd review-radar
+2. Install Dependencies
+npm install
+3. Configure Environment Variables
+
+Create a .env file in the project root.
+
+DATABASE_URL="YOUR_MONGODB_CONNECTION_STRING"
+
+JWT_SECRET="YOUR_SECURE_RANDOM_SECRET"
+
+GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+
+
+
+4. Configure Prisma
+
+Generate Prisma Client:
+
+npx prisma generate
+
+Push the database schema:
+
+npx prisma db push
+5. Start the Development Server
+npm run dev
