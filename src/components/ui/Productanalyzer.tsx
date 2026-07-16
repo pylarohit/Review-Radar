@@ -109,7 +109,7 @@ export default function ProductAnalyzer() {
   return (
     <div className="w-full flex flex-col items-center">
       {/* Search Input Card */}
-      <section className="w-full max-w-3xl text-center mb-12">
+      <section className="w-full max-w-3xl text-center mb-6">
         <p className="mb-3 text-sm font-semibold tracking-wider text-violet-650 flex items-center justify-center gap-1.5">
           <Sparkles className="w-4 h-4 text-violet-500 animate-pulse" />
           AI-POWERED REVIEW RADAR
@@ -127,7 +127,7 @@ export default function ProductAnalyzer() {
 
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mt-10 flex max-w-3xl gap-3"
+          className="mx-auto mt-6 flex flex-col sm:flex-row max-w-3xl gap-3"
         >
           <input
             type="url"
@@ -135,14 +135,14 @@ export default function ProductAnalyzer() {
             value={productUrl}
             onChange={(event) => setProductUrl(event.target.value)}
             placeholder="Paste Amazon, BestBuy, or other product link here..."
-            className="h-14 flex-1 rounded-xl border border-zinc-200 bg-white px-5 outline-none text-zinc-900 placeholder:text-zinc-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 shadow-sm transition-all text-sm sm:text-base"
+            className="h-14 w-full sm:flex-1 rounded-xl border border-zinc-200 bg-white px-5 outline-none text-zinc-900 placeholder:text-zinc-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 shadow-sm transition-all text-sm sm:text-base"
             disabled={isLoading}
           />
 
           <button
             type="submit"
             disabled={isLoading}
-            className="rounded-xl bg-violet-600 px-8 font-semibold text-white hover:bg-violet-700 active:scale-[0.98] shadow-md shadow-violet-500/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-14 w-full sm:w-auto rounded-xl bg-violet-600 px-8 font-semibold text-white hover:bg-violet-700 active:scale-[0.98] shadow-md shadow-violet-500/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isLoading ? "Analyzing..." : "Analyze"}

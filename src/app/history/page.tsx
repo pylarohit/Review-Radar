@@ -21,7 +21,7 @@ export default async function HistoryPage() {
 
         <Navbar userName={session.name} userEmail={session.email} />
 
-        <section className="relative mx-auto max-w-6xl px-6 py-20 z-10">
+        <section className="relative mx-auto max-w-6xl px-6 py-8 sm:py-12 z-10">
           <ProductAnalyzer />
         </section>
       </div>
