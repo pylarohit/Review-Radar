@@ -15,7 +15,7 @@ export default function Footer() {
         <p>© {new Date().getFullYear()} ReviewRadar. All rights reserved.</p>
         <div className="flex gap-6">
           <motion.a
-            href="#"
+            href="/privacy"
             className="hover:text-[var(--rr-text)] transition-colors"
             whileHover={{ y: -2 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -23,20 +23,12 @@ export default function Footer() {
             Privacy
           </motion.a>
           <motion.a
-            href="#"
+            href="/terms"
             className="hover:text-[var(--rr-text)] transition-colors"
             whileHover={{ y: -2 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
             Terms
-          </motion.a>
-          <motion.a
-            href="#"
-            className="hover:text-[var(--rr-text)] transition-colors"
-            whileHover={{ y: -2 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          >
-            Contact
           </motion.a>
         </div>
       </div>

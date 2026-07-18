@@ -1,11 +1,21 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import Logo from "@/components/ui/Logo";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("rr_user");
+    if (stored) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   return (
     <header
       className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[var(--rr-bg)]/80 backdrop-blur-md"
@@ -23,30 +33,47 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <Link
-              href="/login"
-              className="rounded-full px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-[var(--rr-muted)] transition-colors hover:text-[var(--rr-text)]"
+          {isLoggedIn ? (
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              Login
-            </Link>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05, y: -1 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <Link
-              href="/signup"
-              className="rounded-full bg-[var(--rr-signal)] px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--rr-bg)] transition-transform hover:brightness-110"
-            >
-              Sign Up
-            </Link>
-          </motion.div>
+              <Link
+                href="/dashboard"
+                className="rounded-full bg-[var(--rr-signal)] px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--rr-bg)] transition-transform hover:brightness-110"
+              >
+                Dashboard
+              </Link>
+            </motion.div>
+          ) : (
+            <>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Link
+                  href="/login"
+                  className="rounded-full px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-[var(--rr-muted)] transition-colors hover:text-[var(--rr-text)]"
+                >
+                  Login
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Link
+                  href="/signup"
+                  className="rounded-full bg-[var(--rr-signal)] px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--rr-bg)] transition-transform hover:brightness-110"
+                >
+                  Sign Up
+                </Link>
+              </motion.div>
+            </>
+          )}
           <ThemeToggle />
         </div>
       </nav>
