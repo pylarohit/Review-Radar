@@ -16,10 +16,6 @@ function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
   const next = searchParams.get("next") || "/dashboard";
   const isSignup = mode === "signup";
 
-  const warmAuthenticatedRoutes = () => {
-    ["/dashboard", "/history", "/profile"].forEach((href) => router.prefetch(href));
-  };
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -83,8 +79,10 @@ function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
       }
 
       toast.success(isSignup ? "Account created!" : "Welcome back!");
-      warmAuthenticatedRoutes();
+      // Clear the anonymous route cache before entering the authenticated app.
+      // The dashboard navbar warms the protected pages after this navigation.
       router.push(next);
+      router.refresh();
     } catch {
       toast.error("Something went wrong. Please try again.");
       setLoading(false);
@@ -114,8 +112,8 @@ function AuthFormInner({ mode }: { mode: "login" | "signup" }) {
 
       localStorage.setItem("rr_user", JSON.stringify(data.user));
       toast.success("Successfully authenticated!");
-      warmAuthenticatedRoutes();
       router.push(next);
+      router.refresh();
     } catch (err: any) {
       console.error("Google login failed:", err);
       if (err.code !== "auth/popup-closed-by-user") {
