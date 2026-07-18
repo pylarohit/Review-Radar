@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { 
   Star, 
   Loader2, 
@@ -48,7 +47,6 @@ type AnalysisResult = {
 };
 
 export default function ProductAnalyzer() {
-  const router = useRouter();
   const [productUrl, setProductUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -96,8 +94,6 @@ export default function ProductAnalyzer() {
 
       const data = await response.json();
       setResult(data);
-      router.push(`/dashboard?productId=${data.product.id}`);
-      router.refresh();
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
