@@ -15,11 +15,16 @@ async function queryDashboardProducts(userId: string) {
 type DashboardProducts = Awaited<ReturnType<typeof queryDashboardProducts>>;
 
 const globalForDashboardCache = globalThis as unknown as {
-  dashboardProductsCache?: Map<string, Promise<DashboardProducts>>;
+  dashboardProductsCache?: Map<string, DashboardCacheEntry>;
+};
+
+type DashboardCacheEntry = {
+  data?: DashboardProducts;
+  request?: Promise<DashboardProducts>;
 };
 
 const developmentCache =
-  globalForDashboardCache.dashboardProductsCache ?? new Map<string, Promise<DashboardProducts>>();
+  globalForDashboardCache.dashboardProductsCache ?? new Map<string, DashboardCacheEntry>();
 
 if (process.env.NODE_ENV !== "production") {
   globalForDashboardCache.dashboardProductsCache = developmentCache;
@@ -33,18 +38,25 @@ export async function getDashboardProducts(userId: string) {
   // Next intentionally skips persistent data caching in development. Keeping a
   // small process-local cache gives the local app the same repeat-visit speed.
   if (process.env.NODE_ENV !== "production") {
-    const cachedProducts = developmentCache.get(userId);
-    if (cachedProducts) return cachedProducts;
+    const cacheEntry = developmentCache.get(userId);
+    if (cacheEntry?.data) return cacheEntry.data;
+    if (cacheEntry?.request) return cacheEntry.request;
 
-    const productsPromise = queryDashboardProducts(userId);
-    developmentCache.set(userId, productsPromise);
+    const entry = cacheEntry ?? {};
+    const productsPromise = queryDashboardProducts(userId)
+      .then((products) => {
+        entry.data = products;
+        entry.request = undefined;
+        return products;
+      })
+      .catch((error) => {
+        developmentCache.delete(userId);
+        throw error;
+      });
 
-    try {
-      return await productsPromise;
-    } catch (error) {
-      developmentCache.delete(userId);
-      throw error;
-    }
+    entry.request = productsPromise;
+    developmentCache.set(userId, entry);
+    return productsPromise;
   }
 
   return unstable_cache(
@@ -57,6 +69,23 @@ export async function getDashboardProducts(userId: string) {
 }
 
 export function invalidateDashboardProducts(userId: string) {
-  developmentCache.delete(userId);
-  revalidateTag(dashboardProductsTag(userId), { expire: 0 });
+  const cacheEntry = developmentCache.get(userId);
+
+  // Serve the last loaded cards immediately in development while this quiet
+  // refresh prepares the latest cards for the next render.
+  if (cacheEntry?.data) {
+    void queryDashboardProducts(userId)
+      .then((products) => {
+        cacheEntry.data = products;
+      })
+      .catch(() => {
+        // The existing cache remains available if a background refresh fails.
+      });
+  } else {
+    developmentCache.delete(userId);
+  }
+
+  // Production uses Next's stale-while-revalidate data cache: show the
+  // existing cards first, then refresh them in the background.
+  revalidateTag(dashboardProductsTag(userId), "max");
 }

@@ -44,6 +44,14 @@ export default function Navbar({ userName, userEmail }: NavbarProps) {
     }
   }, [userName, userEmail]);
 
+  useEffect(() => {
+    // Warm every destination while the user is reading the current page. This
+    // fills Next's client route cache before a navigation link is clicked.
+    ["/dashboard", "/history", "/profile"]
+      .filter((href) => href !== pathname)
+      .forEach((href) => router.prefetch(href));
+  }, [pathname, router]);
+
   function handleLogout() {
     startTransition(async () => {
       try {
@@ -81,6 +89,8 @@ export default function Navbar({ userName, userEmail }: NavbarProps) {
             <Link
               key={link.href}
               href={link.href}
+              onMouseEnter={() => router.prefetch(link.href)}
+              onFocus={() => router.prefetch(link.href)}
               className={`relative transition-all pb-1.5 -mb-0.5 ${
                 pathname === link.href
                   ? "text-[var(--rr-accent)] font-bold"
@@ -202,6 +212,8 @@ export default function Navbar({ userName, userEmail }: NavbarProps) {
                   >
                     <Link
                       href={link.href}
+                      onMouseEnter={() => router.prefetch(link.href)}
+                      onFocus={() => router.prefetch(link.href)}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`text-base font-bold pb-2 border-b border-[var(--rr-muted)]/10 block ${
                         pathname === link.href ? "text-[var(--rr-accent)]" : "text-[var(--rr-muted)] hover:text-[var(--rr-text)]"
