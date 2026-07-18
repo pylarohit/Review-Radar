@@ -151,7 +151,6 @@ body {
   @apply bg-background text-foreground;
   background-color: var(--rr-bg);
   color: var(--rr-text);
-  overflow-x: hidden;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
