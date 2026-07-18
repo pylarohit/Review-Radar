@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 
+export const maxDuration = 60;
+
+
 export async function POST(request: Request) {
   try {
     const { productUrl } = await request.json();

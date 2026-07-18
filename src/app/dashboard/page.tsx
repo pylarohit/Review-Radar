@@ -4,18 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import PageTransition from "@/components/ui/PageTransition";
+import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 
 export const revalidate = 0;
 
-export default async function DashboardPage() {
-    const session = await getSessionUser();
-    if (!session) {
-        redirect("/login");
-    }
-
+async function ProductsList({ userId }: { userId: string }) {
     const products = await prisma.product.findMany({
         where: {
-            userId: session.userId,
+            userId: userId,
         },
         include: {
             reviews: true,
@@ -25,6 +22,24 @@ export default async function DashboardPage() {
             createdAt: "desc",
         },
     });
+
+    return <DashboardView products={products} />;
+}
+
+function ProductsFallback() {
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
+            <Loader2 className="w-8 h-8 text-[var(--rr-text)] animate-spin opacity-50" />
+            <p className="text-[var(--rr-text)] opacity-70">Loading your products...</p>
+        </div>
+    );
+}
+
+export default async function DashboardPage() {
+    const session = await getSessionUser();
+    if (!session) {
+        redirect("/login");
+    }
 
     return (
         <main className="h-screen flex flex-col overflow-hidden bg-[var(--rr-bg)] text-[var(--rr-text)] relative">
@@ -37,7 +52,9 @@ export default async function DashboardPage() {
             <Navbar userName={session.name} userEmail={session.email} />
 
             <PageTransition className="flex-1 flex overflow-hidden z-10">
-                <DashboardView products={products} />
+                <Suspense fallback={<ProductsFallback />}>
+                    <ProductsList userId={session.userId} />
+                </Suspense>
             </PageTransition>
         </main>
     );
