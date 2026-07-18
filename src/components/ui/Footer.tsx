@@ -33,14 +33,14 @@ export function Footer({
   copyright,
 }: FooterProps) {
   return (
-    <footer className="pt-5 pb-4 border-t border-zinc-200 bg-white">
+    <footer className="pt-5 pb-4 border-t border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] text-[var(--rr-text)]">
       <div className="w-full px-6 flex flex-col gap-3 text-[13px]">
         
         {/* Line 1: Brand & Navigation Links */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b border-zinc-100">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b border-[var(--rr-muted)]/10">
           <a
             href="/"
-            className="flex items-center gap-1.5 font-bold text-zinc-900 hover:text-violet-600 transition-colors text-sm"
+            className="flex items-center gap-1.5 font-bold text-[var(--rr-text)] hover:text-[var(--rr-accent)] transition-colors text-sm"
             aria-label={brandName}
           >
             {logo}
@@ -52,7 +52,7 @@ export function Footer({
               <a
                 key={i}
                 href={link.href}
-                className="text-zinc-500 hover:text-violet-600 transition-colors font-semibold"
+                className="text-[var(--rr-muted)] hover:text-[var(--rr-accent)] transition-colors font-semibold"
               >
                 {link.label}
               </a>
@@ -62,12 +62,12 @@ export function Footer({
 
         {/* Line 2: Copyright & Socials/Legal Links */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 pt-0.5">
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-zinc-400">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-[var(--rr-muted)]/80">
             <span>{copyright.text}</span>
             {copyright.license && (
               <>
-                <span className="text-zinc-200 hidden sm:inline">•</span>
-                <span className="text-zinc-400">{copyright.license}</span>
+                <span className="text-[var(--rr-muted)]/20 hidden sm:inline">•</span>
+                <span className="text-[var(--rr-muted)]/80">{copyright.license}</span>
               </>
             )}
           </div>
@@ -79,14 +79,14 @@ export function Footer({
                 <a
                   key={i}
                   href={link.href}
-                  className="text-zinc-450 hover:text-zinc-700 transition-colors"
+                  className="text-[var(--rr-muted)] hover:text-[var(--rr-text)] transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
             </div>
 
-            <span className="text-zinc-200 hidden sm:inline">|</span>
+            <span className="text-[var(--rr-muted)]/20 hidden sm:inline">|</span>
 
             {/* Socials */}
             <ul className="flex list-none space-x-2 p-0 m-0">
@@ -97,7 +97,7 @@ export function Footer({
                     target="_blank" 
                     rel="noopener noreferrer"
                     aria-label={link.label}
-                    className="h-8 w-8 rounded-lg inline-flex items-center justify-center bg-zinc-50 text-zinc-450 hover:bg-zinc-100 hover:text-zinc-900 transition-all border border-zinc-150 shadow-sm"
+                    className="h-8 w-8 rounded-lg inline-flex items-center justify-center bg-[var(--rr-surface)] text-[var(--rr-muted)] hover:bg-[var(--rr-bg)] hover:text-[var(--rr-text)] transition-all border border-[var(--rr-muted)]/15 shadow-sm"
                   >
                     {link.icon}
                   </a>

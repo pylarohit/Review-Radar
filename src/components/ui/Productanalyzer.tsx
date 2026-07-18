@@ -107,20 +107,20 @@ export default function ProductAnalyzer() {
   }
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center text-[var(--rr-text)]">
       {/* Search Input Card */}
       <section className="w-full max-w-3xl text-center mb-6">
-        <p className="mb-3 text-sm font-semibold tracking-wider text-violet-650 flex items-center justify-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-violet-500 animate-pulse" />
+        <p className="mb-3 text-sm font-semibold tracking-wider text-[var(--rr-accent)] flex items-center justify-center gap-1.5">
+          <Sparkles className="w-4 h-4 text-[var(--rr-accent)] animate-pulse" />
           AI-POWERED REVIEW RADAR
         </p>
 
-        <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 md:text-6xl">
+        <h1 className="text-4xl font-extrabold tracking-tight text-[var(--rr-text)] md:text-6xl">
           Understand product reviews
-          <span className="block text-violet-600 mt-1">before you buy.</span>
+          <span className="block text-[var(--rr-accent)] mt-1">before you buy.</span>
         </h1>
 
-        <p className="mx-auto mt-6 max-w-2xl text-zinc-500 text-lg leading-relaxed">
+        <p className="mx-auto mt-6 max-w-2xl text-[var(--rr-muted)] text-lg leading-relaxed">
           Paste a product URL and ReviewRadar will analyze customer reviews,
           summarize opinions, and highlight the most important pros and cons.
         </p>
@@ -135,14 +135,14 @@ export default function ProductAnalyzer() {
             value={productUrl}
             onChange={(event) => setProductUrl(event.target.value)}
             placeholder="Paste Amazon, BestBuy, or other product link here..."
-            className="h-14 w-full sm:flex-1 rounded-xl border border-zinc-200 bg-white px-5 outline-none text-zinc-900 placeholder:text-zinc-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 shadow-sm transition-all text-sm sm:text-base"
+            className="h-14 w-full sm:flex-1 rounded-xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] px-5 outline-none text-[var(--rr-text)] placeholder:text-[var(--rr-muted)]/70 focus:border-[var(--rr-accent)] focus:ring-4 focus:ring-[var(--rr-accent)]/10 shadow-sm transition-all text-sm sm:text-base"
             disabled={isLoading}
           />
 
           <button
             type="submit"
             disabled={isLoading}
-            className="h-14 w-full sm:w-auto rounded-xl bg-violet-600 px-8 font-semibold text-white hover:bg-violet-700 active:scale-[0.98] shadow-md shadow-violet-500/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            className="h-14 w-full sm:w-auto rounded-xl bg-[var(--rr-accent)] px-8 font-semibold text-white hover:bg-[var(--rr-accent)]/95 active:scale-[0.98] shadow-md shadow-[var(--rr-accent)]/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isLoading ? "Analyzing..." : "Analyze"}
@@ -152,30 +152,30 @@ export default function ProductAnalyzer() {
 
       {/* Loading State Skeleton */}
       {isLoading && (
-        <div className="w-full max-w-4xl p-8 rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-md shadow-lg flex flex-col items-center py-16 animate-pulse">
-          <Loader2 className="w-10 h-10 text-violet-650 animate-spin mb-4" />
-          <h3 className="font-bold text-lg text-zinc-800 transition-all duration-300">
+        <div className="w-full max-w-4xl p-8 rounded-3xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)]/70 backdrop-blur-md shadow-lg flex flex-col items-center py-16 animate-pulse">
+          <Loader2 className="w-10 h-10 text-[var(--rr-accent)] animate-spin mb-4" />
+          <h3 className="font-bold text-lg text-[var(--rr-text)] transition-all duration-300">
             {loadingTexts[loadingStep]}
           </h3>
-          <p className="text-xs text-zinc-400 mt-2">Gemini is synthesizing live data patterns. This takes a few seconds.</p>
+          <p className="text-xs text-[var(--rr-muted)] mt-2">Gemini is synthesizing live data patterns. This takes a few seconds.</p>
           
           <div className="w-full mt-10 space-y-6">
-            <div className="h-6 bg-zinc-200/60 rounded-lg w-1/3"></div>
+            <div className="h-6 bg-[var(--rr-bg)]/60 rounded-lg w-1/3"></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="h-28 bg-zinc-200/60 rounded-2xl"></div>
-              <div className="h-28 bg-zinc-200/60 rounded-2xl col-span-2"></div>
+              <div className="h-28 bg-[var(--rr-bg)]/60 rounded-2xl"></div>
+              <div className="h-28 bg-[var(--rr-bg)]/60 rounded-2xl col-span-2"></div>
             </div>
-            <div className="h-40 bg-zinc-200/60 rounded-2xl"></div>
+            <div className="h-40 bg-[var(--rr-bg)]/60 rounded-2xl"></div>
           </div>
         </div>
       )}
 
       {/* Error Card */}
       {error && (
-        <div className="w-full max-w-2xl p-6 rounded-2xl border border-rose-200 bg-rose-50/50 text-rose-800 flex items-start gap-3 shadow-sm mb-12">
-          <AlertCircle className="w-5 h-5 mt-0.5 text-rose-600 flex-shrink-0" />
+        <div className="w-full max-w-2xl p-6 rounded-2xl border border-rose-500/20 bg-rose-500/5 text-rose-400 flex items-start gap-3 shadow-sm mb-12">
+          <AlertCircle className="w-5 h-5 mt-0.5 text-rose-500 flex-shrink-0" />
           <div>
-            <h4 className="font-bold text-sm text-rose-900">Analysis Error</h4>
+            <h4 className="font-bold text-sm text-rose-500">Analysis Error</h4>
             <p className="text-sm mt-1 leading-relaxed">{error}</p>
           </div>
         </div>
@@ -186,17 +186,17 @@ export default function ProductAnalyzer() {
         <div className="w-full max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-500">
           
           {/* Product Overview Header Card */}
-          <div className="p-8 rounded-3xl border border-zinc-200/80 bg-white shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-violet-500/10 to-transparent rounded-full blur-2xl pointer-events-none"></div>
+          <div className="p-8 rounded-3xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[var(--rr-accent)]/10 to-transparent rounded-full blur-2xl pointer-events-none"></div>
             <div className="flex flex-col md:flex-row justify-between items-start gap-4">
               <div className="flex-1">
-                <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-violet-650 bg-violet-50 border border-violet-100">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[var(--rr-accent)] bg-[var(--rr-accent)]/10 border border-[var(--rr-accent)]/20">
                   {result.product.category}
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 mt-3 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--rr-text)] mt-3 tracking-tight">
                   {result.product.name}
                 </h2>
-                <p className="text-zinc-500 text-sm sm:text-base mt-3 leading-relaxed">
+                <p className="text-[var(--rr-muted)] text-sm sm:text-base mt-3 leading-relaxed">
                   {result.product.description}
                 </p>
               </div>
@@ -206,7 +206,7 @@ export default function ProductAnalyzer() {
                   href={result.product.productUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-600 hover:text-zinc-900 text-xs font-semibold transition-all mt-1"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--rr-muted)]/15 hover:border-[var(--rr-muted)]/30 hover:bg-[var(--rr-bg)] text-[var(--rr-muted)] hover:text-[var(--rr-text)] text-xs font-semibold transition-all mt-1"
                 >
                   Visit Link <ExternalLink className="w-3.5 h-3.5" />
                 </a>
@@ -217,10 +217,10 @@ export default function ProductAnalyzer() {
           {/* Sentiment Meter and Summary Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Sentiment Meter (1 Column) */}
-            <div className="p-6 rounded-2xl border border-zinc-200/80 bg-white shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-2xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] shadow-sm flex flex-col justify-between">
               <div>
-                <h3 className="font-bold text-sm text-zinc-800">Overall Sentiment</h3>
-                <span className="text-2xl font-black text-violet-650 mt-1 inline-block">
+                <h3 className="font-bold text-sm text-[var(--rr-text)]">Overall Sentiment</h3>
+                <span className="text-2xl font-black text-[var(--rr-accent)] mt-1 inline-block">
                   {result.analysis.overallSentiment}
                 </span>
               </div>
@@ -228,11 +228,11 @@ export default function ProductAnalyzer() {
               <div className="space-y-3.5 mt-6">
                 {/* Positive bar */}
                 <div>
-                  <div className="flex justify-between text-xs font-semibold text-zinc-500 mb-1">
+                  <div className="flex justify-between text-xs font-semibold text-[var(--rr-muted)] mb-1">
                     <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3 text-emerald-500" /> Positive</span>
-                    <span className="text-emerald-600">{result.analysis.positivePercent}%</span>
+                    <span className="text-emerald-500 font-bold">{result.analysis.positivePercent}%</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-[var(--rr-bg)] overflow-hidden">
                     <div 
                       className="h-full rounded-full bg-emerald-500" 
                       style={{ width: `${result.analysis.positivePercent}%` }}
@@ -242,11 +242,11 @@ export default function ProductAnalyzer() {
 
                 {/* Neutral bar */}
                 <div>
-                  <div className="flex justify-between text-xs font-semibold text-zinc-500 mb-1">
+                  <div className="flex justify-between text-xs font-semibold text-[var(--rr-muted)] mb-1">
                     <span className="flex items-center gap-1">Neutral</span>
-                    <span className="text-zinc-600">{result.analysis.neutralPercent}%</span>
+                    <span className="text-[var(--rr-muted)] font-bold">{result.analysis.neutralPercent}%</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-[var(--rr-bg)] overflow-hidden">
                     <div 
                       className="h-full rounded-full bg-zinc-400" 
                       style={{ width: `${result.analysis.neutralPercent}%` }}
@@ -256,11 +256,11 @@ export default function ProductAnalyzer() {
 
                 {/* Negative bar */}
                 <div>
-                  <div className="flex justify-between text-xs font-semibold text-zinc-500 mb-1">
+                  <div className="flex justify-between text-xs font-semibold text-[var(--rr-muted)] mb-1">
                     <span className="flex items-center gap-1"><ThumbsDown className="w-3 h-3 text-rose-500" /> Negative</span>
-                    <span className="text-rose-600">{result.analysis.negativePercent}%</span>
+                    <span className="text-rose-500 font-bold">{result.analysis.negativePercent}%</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-[var(--rr-bg)] overflow-hidden">
                     <div 
                       className="h-full rounded-full bg-rose-500" 
                       style={{ width: `${result.analysis.negativePercent}%` }}
@@ -271,18 +271,18 @@ export default function ProductAnalyzer() {
             </div>
 
             {/* AI Summary (2 Columns) */}
-            <div className="p-6 rounded-2xl border border-zinc-200/80 bg-white shadow-sm md:col-span-2 flex flex-col justify-between">
+            <div className="p-6 rounded-2xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] shadow-sm md:col-span-2 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 text-zinc-800">
-                  <Sparkles className="w-4 h-4 text-violet-500 animate-pulse" />
+                <div className="flex items-center gap-1.5 text-[var(--rr-text)]">
+                  <Sparkles className="w-4 h-4 text-[var(--rr-accent)] animate-pulse" />
                   <h3 className="font-bold text-sm">Gemini AI Synthesis</h3>
                 </div>
-                <p className="text-zinc-650 text-sm leading-relaxed mt-4">
+                <p className="text-[var(--rr-text)]/90 text-sm leading-relaxed mt-4">
                   {result.analysis.summary}
                 </p>
               </div>
 
-              <div className="border-t border-zinc-100 pt-4 mt-6 flex justify-between items-center text-[11px] text-zinc-400 font-medium">
+              <div className="border-t border-[var(--rr-muted)]/10 pt-4 mt-6 flex justify-between items-center text-[11px] text-[var(--rr-muted)]/80 font-medium">
                 <span>Model: Gemini 1.5 Flash</span>
                 <span>Highly confident assessment</span>
               </div>
@@ -292,15 +292,15 @@ export default function ProductAnalyzer() {
           {/* Pros and Cons Card */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Pros card */}
-            <div className="p-6 rounded-2xl border border-emerald-100 bg-emerald-50/20 shadow-sm">
-              <h3 className="font-bold text-sm text-emerald-900 flex items-center gap-2 mb-4">
-                <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" />
+            <div className="p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 shadow-sm">
+              <h3 className="font-bold text-sm text-emerald-500 flex items-center gap-2 mb-4">
+                <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
                 Key Pros
               </h3>
               <ul className="space-y-2.5">
                 {result.analysis.pros.map((pro, index) => (
-                  <li key={index} className="text-sm text-zinc-700 flex items-start gap-2">
-                    <span className="font-bold text-emerald-600 mt-0.5">•</span>
+                  <li key={index} className="text-sm text-[var(--rr-text)] flex items-start gap-2">
+                    <span className="font-bold text-emerald-500 mt-0.5">•</span>
                     <span>{pro}</span>
                   </li>
                 ))}
@@ -308,15 +308,15 @@ export default function ProductAnalyzer() {
             </div>
 
             {/* Cons card */}
-            <div className="p-6 rounded-2xl border border-rose-100 bg-rose-50/20 shadow-sm">
-              <h3 className="font-bold text-sm text-rose-900 flex items-center gap-2 mb-4">
-                <XCircle className="w-4.5 h-4.5 text-rose-600" />
+            <div className="p-6 rounded-2xl border border-rose-500/20 bg-rose-500/5 shadow-sm">
+              <h3 className="font-bold text-sm text-rose-500 flex items-center gap-2 mb-4">
+                <XCircle className="w-4.5 h-4.5 text-rose-500" />
                 Key Cons
               </h3>
               <ul className="space-y-2.5">
                 {result.analysis.cons.map((con, index) => (
-                  <li key={index} className="text-sm text-zinc-700 flex items-start gap-2">
-                    <span className="font-bold text-rose-600 mt-0.5">•</span>
+                  <li key={index} className="text-sm text-[var(--rr-text)] flex items-start gap-2">
+                    <span className="font-bold text-rose-500 mt-0.5">•</span>
                     <span>{con}</span>
                   </li>
                 ))}
@@ -326,17 +326,17 @@ export default function ProductAnalyzer() {
 
           {/* Generated Customer Reviews List */}
           <div className="space-y-4">
-            <h3 className="font-bold text-lg text-zinc-800 tracking-tight">Generated Verified Reviews</h3>
+            <h3 className="font-bold text-lg text-[var(--rr-text)] tracking-tight">Generated Verified Reviews</h3>
             <div className="grid grid-cols-1 gap-4">
               {result.reviews.map((review) => (
                 <div 
                   key={review.id} 
-                  className="p-5 rounded-2xl border border-zinc-200/80 bg-white hover:border-zinc-300 transition-colors shadow-sm"
+                  className="p-5 rounded-2xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] hover:border-[var(--rr-muted)]/30 transition-colors shadow-sm"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-zinc-800">{review.reviewer}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded">
+                      <span className="font-bold text-sm text-[var(--rr-text)]">{review.reviewer}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--rr-muted)] bg-[var(--rr-bg)] px-2 py-0.5 rounded border border-[var(--rr-muted)]/10">
                         Verified Reviewer
                       </span>
                     </div>
@@ -351,7 +351,7 @@ export default function ProductAnalyzer() {
                               "w-3.5 h-3.5",
                               i < review.rating 
                                 ? "text-amber-400 fill-amber-400" 
-                                : "text-zinc-200"
+                                : "text-[var(--rr-muted)]/30"
                             )} 
                           />
                         ))}
@@ -361,17 +361,17 @@ export default function ProductAnalyzer() {
                       <span className={cn(
                         "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
                         review.sentiment === "positive" 
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-100" 
+                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/25" 
                           : review.sentiment === "negative"
-                          ? "bg-rose-50 text-rose-700 border-rose-100" 
-                          : "bg-zinc-50 text-zinc-700 border-zinc-200"
+                          ? "bg-rose-500/10 text-rose-500 border-rose-500/25" 
+                          : "bg-[var(--rr-bg)] text-[var(--rr-muted)] border-[var(--rr-muted)]/15"
                       )}>
                         {review.sentiment}
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-zinc-650 text-sm leading-relaxed">
+                  <p className="text-[var(--rr-text)]/90 text-sm leading-relaxed">
                     "{review.reviewText}"
                   </p>
                 </div>
