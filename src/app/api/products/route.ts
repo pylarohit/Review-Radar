@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { invalidateDashboardProducts } from "@/lib/dashboard-products";
 
 export async function GET() {
   try {
@@ -28,6 +29,8 @@ export async function POST(request: Request) {
         userId: body.userId,
       },
     });
+
+    invalidateDashboardProducts(product.userId);
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

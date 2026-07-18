@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
+import { invalidateDashboardProducts } from "@/lib/dashboard-products";
 
 export const maxDuration = 60;
 
@@ -173,6 +174,10 @@ export async function POST(request: Request) {
         cons: parsedData.cons || [],
       },
     });
+
+    // A new product changes the dashboard cards, so the next visit receives
+    // fresh data instead of the user's previously cached list.
+    invalidateDashboardProducts(session.userId);
 
     // Fetch final reviews to return with database ids
     const savedReviews = await prisma.review.findMany({

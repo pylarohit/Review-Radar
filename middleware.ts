@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-const PROTECTED_PREFIXES = ["/main", "/analysis", "/dashboard", "/profile"];
+const PROTECTED_PREFIXES = ["/main", "/analysis", "/dashboard", "/history", "/profile"];
 const AUTH_PAGES = ["/login", "/signup"];
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -38,5 +38,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/main/:path*", "/analysis/:path*", "/dashboard/:path*", "/profile/:path*", "/login", "/signup"],
+  matcher: ["/main/:path*", "/analysis/:path*", "/dashboard/:path*", "/history/:path*", "/profile/:path*", "/login", "/signup"],
 };

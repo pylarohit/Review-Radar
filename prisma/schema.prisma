@@ -44,6 +44,8 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 
@@ -61,8 +63,9 @@ model Review {
   sentiment  String?
 
   createdAt DateTime @default(now())
-}
 
+  @@index([productId])
+}
 
 
 
@@ -85,4 +88,6 @@ model Analysis {
   cons String[]
 
   createdAt DateTime @default(now())
+
+  @@index([productId])
 }

@@ -1,27 +1,14 @@
 import Navbar from "@/components/ui/Navbar";
 import DashboardView from "@/components/ui/DashboardView";
-import { prisma } from "@/lib/prisma";
+import { getDashboardProducts } from "@/lib/dashboard-products";
 import { getSessionUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import PageTransition from "@/components/ui/PageTransition";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 
-export const revalidate = 0;
-
 async function ProductsList({ userId }: { userId: string }) {
-    const products = await prisma.product.findMany({
-        where: {
-            userId: userId,
-        },
-        include: {
-            reviews: true,
-            analyses: true,
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+    const products = await getDashboardProducts(userId);
 
     return <DashboardView products={products} />;
 }
@@ -58,4 +45,4 @@ export default async function DashboardPage() {
             </PageTransition>
         </main>
     );
-}
+}

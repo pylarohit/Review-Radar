@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { invalidateDashboardProducts } from "@/lib/dashboard-products";
 
 export async function GET(request: Request) {
   try {
@@ -46,6 +47,15 @@ export async function POST(request: Request) {
         sentiment: body.sentiment,
       },
     });
+
+    const product = await prisma.product.findUnique({
+      where: { id: review.productId },
+      select: { userId: true },
+    });
+
+    if (product) {
+      invalidateDashboardProducts(product.userId);
+    }
 
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
