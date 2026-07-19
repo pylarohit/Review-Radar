@@ -5,7 +5,7 @@ import { getSessionUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import PageTransition from "@/components/ui/PageTransition";
 import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
+import { DashboardContentSkeleton } from "@/components/ui/PageSkeletons";
 
 async function ProductsList({ userId }: { userId: string }) {
     const products = await getDashboardProducts(userId);
@@ -14,12 +14,7 @@ async function ProductsList({ userId }: { userId: string }) {
 }
 
 function ProductsFallback() {
-    return (
-        <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-8 h-8 text-[var(--rr-text)] animate-spin opacity-50" />
-            <p className="text-[var(--rr-text)] opacity-70">Loading your products...</p>
-        </div>
-    );
+    return <DashboardContentSkeleton />;
 }
 
 export default async function DashboardPage() {

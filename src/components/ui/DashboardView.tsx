@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { 
   Star, 
   Sparkles, 
@@ -13,11 +13,13 @@ import {
   MessageSquare,
   ArrowLeft,
   FolderOpen,
-  X
+  X,
+  Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AppFooter from "./Footer";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 type Review = {
   id: string;
@@ -55,6 +57,13 @@ interface DashboardViewProps {
 
 export default function DashboardView({ products }: DashboardViewProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  // Localized products state for instant deletes and updates
+  const [localProducts, setLocalProducts] = useState<Product[]>(products);
+  
+  // Confirmation state for deleting a product
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
   
   // Selection state
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
@@ -63,23 +72,27 @@ export default function DashboardView({ products }: DashboardViewProps) {
 
   const itemsPerPage = 12; // 3 columns * 4 rows
 
+  useEffect(() => {
+    setLocalProducts(products);
+  }, [products]);
+
   // Read URL search param on mount or update
   useEffect(() => {
     const queryProductId = searchParams.get("productId");
-    if (queryProductId && products.some(p => p.id === queryProductId)) {
+    if (queryProductId && localProducts.some(p => p.id === queryProductId)) {
       setSelectedProductId(queryProductId);
     }
-  }, [searchParams, products]);
+  }, [searchParams, localProducts]);
 
   // Paginated chunk
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return products.slice(start, start + itemsPerPage);
-  }, [products, currentPage]);
+    return localProducts.slice(start, start + itemsPerPage);
+  }, [localProducts, currentPage]);
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const totalPages = Math.ceil(localProducts.length / itemsPerPage);
 
-  const activeProduct = products.find(p => p.id === selectedProductId) || null;
+  const activeProduct = localProducts.find(p => p.id === selectedProductId) || null;
   const activeAnalysis = activeProduct?.analyses?.[0] || null;
   const activeReviews = activeProduct?.reviews || [];
 
@@ -91,9 +104,33 @@ export default function DashboardView({ products }: DashboardViewProps) {
     window.history.pushState(null, "", `?${params.toString()}`);
   };
 
+  const handleDeleteProduct = async (productId: string) => {
+    // Optimistically update the UI
+    setLocalProducts((prev) => prev.filter((p) => p.id !== productId));
+    if (selectedProductId === productId) {
+      handleBackToGrid();
+    }
+    
+    try {
+      const response = await fetch(`/api/products?id=${productId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to delete product");
+      }
+      toast.success("Product analysis deleted");
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete product");
+      // Revert if it fails
+      setLocalProducts(products);
+    }
+  };
+
   // Render Product Cards Grid
   const renderProductsGrid = () => {
-    if (products.length === 0) {
+    if (localProducts.length === 0) {
       return (
         <div className="w-full text-center py-20 rounded-3xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] p-8 shadow-sm">
           <FolderOpen className="w-12 h-12 text-[var(--rr-muted)]/50 mx-auto mb-4" />
@@ -210,7 +247,7 @@ export default function DashboardView({ products }: DashboardViewProps) {
               </button>
             </div>
             
-            {products.length === 0 ? (
+            {localProducts.length === 0 ? (
               <p className="text-xs text-[var(--rr-muted)] italic mt-4">No products searched yet.</p>
             ) : (
               <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1">
@@ -232,28 +269,46 @@ export default function DashboardView({ products }: DashboardViewProps) {
                   All Products Grid
                 </button>
                 
-                {products.map((product) => {
+                {localProducts.map((product) => {
                   const isActive = product.id === selectedProductId;
                   return (
-                    <button
+                    <div 
                       key={product.id}
-                      onClick={() => {
-                        setSelectedProductId(product.id);
-                        setIsMobileSidebarOpen(false);
-                        const params = new URLSearchParams(window.location.search);
-                        params.set("productId", product.id);
-                        window.history.pushState(null, "", `?${params.toString()}`);
-                      }}
-                      className={cn(
-                        "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all truncate border cursor-pointer shrink-0",
-                        isActive
-                          ? "bg-[var(--rr-accent)] text-white shadow-sm border-[var(--rr-accent)] font-bold"
-                          : "text-[var(--rr-muted)] border-transparent hover:text-[var(--rr-text)] hover:bg-[var(--rr-bg)]"
-                      )}
-                      title={product.name}
+                      className="group relative w-full flex items-center justify-between shrink-0 mb-1"
                     >
-                      {product.name}
-                    </button>
+                      <button
+                        onClick={() => {
+                          setSelectedProductId(product.id);
+                          setIsMobileSidebarOpen(false);
+                          const params = new URLSearchParams(window.location.search);
+                          params.set("productId", product.id);
+                          window.history.pushState(null, "", `?${params.toString()}`);
+                        }}
+                        className={cn(
+                          "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all truncate border cursor-pointer pr-10",
+                          isActive
+                            ? "bg-[var(--rr-accent)] text-white shadow-sm border-[var(--rr-accent)] font-bold"
+                            : "text-[var(--rr-muted)] border-transparent hover:text-[var(--rr-text)] hover:bg-[var(--rr-bg)]"
+                        )}
+                        title={product.name}
+                      >
+                        {product.name}
+                      </button>
+                      
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setProductToDelete(product.id);
+                        }}
+                        className={cn(
+                          "absolute right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-500/10 cursor-pointer z-10 transition-all",
+                          isActive ? "text-white/80 hover:text-white" : "text-rose-500 hover:text-rose-600"
+                        )}
+                        title="Delete product"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -269,7 +324,7 @@ export default function DashboardView({ products }: DashboardViewProps) {
           Searched Products
         </h2>
         
-        {products.length === 0 ? (
+        {localProducts.length === 0 ? (
           <p className="text-xs text-[var(--rr-muted)] italic mt-4">No products searched yet.</p>
         ) : (
           <div className="flex-1 overflow-y-auto mt-4 pr-1 flex flex-col gap-1">
@@ -290,27 +345,45 @@ export default function DashboardView({ products }: DashboardViewProps) {
               All Products Grid
             </button>
             
-            {products.map((product) => {
+            {localProducts.map((product) => {
               const isActive = product.id === selectedProductId;
               return (
-                <button
+                <div 
                   key={product.id}
-                  onClick={() => {
-                    setSelectedProductId(product.id);
-                    const params = new URLSearchParams(window.location.search);
-                    params.set("productId", product.id);
-                    window.history.pushState(null, "", `?${params.toString()}`);
-                  }}
-                  className={cn(
-                    "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all truncate border cursor-pointer shrink-0",
-                    isActive
-                      ? "bg-[var(--rr-accent)] text-white shadow-sm border-[var(--rr-accent)] font-bold"
-                      : "text-[var(--rr-muted)] border-transparent hover:text-[var(--rr-text)] hover:bg-[var(--rr-bg)]"
-                  )}
-                  title={product.name}
+                  className="group relative w-full flex items-center justify-between shrink-0 mb-1"
                 >
-                  {product.name}
-                </button>
+                  <button
+                    onClick={() => {
+                      setSelectedProductId(product.id);
+                      const params = new URLSearchParams(window.location.search);
+                      params.set("productId", product.id);
+                      window.history.pushState(null, "", `?${params.toString()}`);
+                    }}
+                    className={cn(
+                      "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all truncate border cursor-pointer pr-10",
+                      isActive
+                        ? "bg-[var(--rr-accent)] text-white shadow-sm border-[var(--rr-accent)] font-bold"
+                        : "text-[var(--rr-muted)] border-transparent hover:text-[var(--rr-text)] hover:bg-[var(--rr-bg)]"
+                    )}
+                    title={product.name}
+                  >
+                    {product.name}
+                  </button>
+                  
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setProductToDelete(product.id);
+                    }}
+                    className={cn(
+                      "absolute right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-rose-500/10 cursor-pointer z-10 transition-all",
+                      isActive ? "text-white/80 hover:text-white" : "text-rose-500 hover:text-rose-600"
+                    )}
+                    title="Delete product"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -336,7 +409,7 @@ export default function DashboardView({ products }: DashboardViewProps) {
                   <h1 className="text-2xl font-black text-[var(--rr-text)] tracking-tight">Analyzed Products</h1>
                 </div>
                 <span className="text-xs font-bold text-[var(--rr-text)] bg-[var(--rr-surface)] border border-[var(--rr-muted)]/15 px-3 py-1 rounded-full">
-                  Showing {products.length} items
+                  Showing {localProducts.length} items
                 </span>
               </div>
               {renderProductsGrid()}
@@ -589,6 +662,73 @@ export default function DashboardView({ products }: DashboardViewProps) {
         <AppFooter />
       </main>
 
+
+      {/* Confirm Delete Modal */}
+      <AnimatePresence>
+        {productToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setProductToDelete(null)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            />
+            
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ 
+                type: "spring",
+                duration: 0.3,
+                bounce: 0.1
+              }}
+              className="relative w-full max-w-md overflow-hidden rounded-3xl border border-rose-500/20 bg-[var(--rr-surface)] p-8 shadow-2xl z-50 text-[var(--rr-text)] pointer-events-auto"
+            >
+              {/* Decorative Warning glow */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="flex flex-col items-center text-center">
+                {/* Warning Icon Badge */}
+                <div className="relative mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 shadow-inner">
+                  <span className="absolute inset-0 animate-ping rounded-2xl bg-rose-500/10 opacity-75" />
+                  <Trash2 className="h-7 w-7" />
+                </div>
+
+                <h3 className="text-xl font-extrabold tracking-tight">
+                  Delete Analysis?
+                </h3>
+                
+                <p className="mt-3 text-sm text-[var(--rr-muted)] leading-relaxed px-2">
+                  Are you sure you want to delete this product? All reviews and synthesis data will be permanently removed.
+                </p>
+
+                <div className="mt-8 flex w-full gap-4">
+                  <button
+                    onClick={() => setProductToDelete(null)}
+                    className="flex-1 rounded-xl border border-[var(--rr-muted)]/15 bg-transparent px-5 py-3 text-sm font-semibold text-[var(--rr-text)] hover:bg-[var(--rr-bg)] hover:border-[var(--rr-muted)]/35 active:scale-[0.98] transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const id = productToDelete;
+                      setProductToDelete(null);
+                      await handleDeleteProduct(id);
+                    }}
+                    className="flex-1 rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white hover:bg-red-700 active:scale-[0.98] transition-all shadow-md shadow-red-600/20 cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

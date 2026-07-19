@@ -1,4 +1,4 @@
-function Skeleton({ className }: { className: string }) {
+export function Skeleton({ className }: { className: string }) {
   return (
     <div
       aria-hidden="true"
@@ -68,34 +68,40 @@ function FooterSkeleton() {
   );
 }
 
+export function DashboardContentSkeleton() {
+  return (
+    <div className="flex min-h-0 w-full h-full flex-1 overflow-hidden">
+      <aside className="hidden w-72 shrink-0 border-r border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] p-6 lg:block">
+        <Skeleton className="h-4 w-36" />
+        <div className="mt-5 space-y-4 border-t border-[var(--rr-muted)]/15 pt-5">
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-4 w-10/12" />
+          <Skeleton className="h-4 w-8/12" />
+        </div>
+      </aside>
+      <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="flex-1 overflow-hidden p-6 sm:p-8">
+          <div className="mb-8 flex items-center justify-between gap-4">
+            <Skeleton className="h-8 w-56" />
+            <Skeleton className="h-8 w-28 rounded-full" />
+          </div>
+          <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <ProductCardSkeleton />
+            <ProductCardSkeleton />
+            <ProductCardSkeleton />
+          </div>
+        </div>
+        <FooterSkeleton />
+      </section>
+    </div>
+  );
+}
+
 export function DashboardPageSkeleton() {
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-[var(--rr-bg)] text-[var(--rr-text)]">
       <AppHeaderSkeleton />
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="hidden w-72 shrink-0 border-r border-[var(--rr-muted)]/15 bg-[var(--rr-surface)] p-6 lg:block">
-          <Skeleton className="h-4 w-36" />
-          <div className="mt-5 space-y-4 border-t border-[var(--rr-muted)]/15 pt-5">
-            <Skeleton className="h-12 w-full rounded-xl" />
-            <Skeleton className="h-4 w-10/12" />
-            <Skeleton className="h-4 w-8/12" />
-          </div>
-        </aside>
-        <section className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-hidden p-6 sm:p-8">
-            <div className="mb-8 flex items-center justify-between gap-4">
-              <Skeleton className="h-8 w-56" />
-              <Skeleton className="h-8 w-28 rounded-full" />
-            </div>
-            <div className="grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <ProductCardSkeleton />
-              <ProductCardSkeleton />
-              <ProductCardSkeleton />
-            </div>
-          </div>
-          <FooterSkeleton />
-        </section>
-      </div>
+      <DashboardContentSkeleton />
     </main>
   );
 }
@@ -134,3 +140,35 @@ export function ProfilePageSkeleton() {
     </main>
   );
 }
+
+export function ReviewPageSkeleton() {
+  return (
+    <main className="min-h-screen bg-[var(--rr-bg)] text-[var(--rr-text)] flex flex-col justify-between overflow-hidden">
+      <div className="flex-1 w-full">
+        <AppHeaderSkeleton />
+        <section className="relative mx-auto max-w-6xl px-6 py-8 sm:py-12 z-10 flex flex-col items-center">
+          <div className="w-full max-w-3xl text-center mb-6 flex flex-col items-center">
+            {/* Tag */}
+            <Skeleton className="h-4 w-44 rounded-full mb-3" />
+            
+            {/* Heading lines */}
+            <Skeleton className="h-10 w-3/4 rounded-xl mb-3" />
+            <Skeleton className="h-10 w-1/2 rounded-xl mb-6" />
+            
+            {/* Description lines */}
+            <Skeleton className="h-3.5 w-2/3 rounded-lg mb-2 mx-auto" />
+            <Skeleton className="h-3.5 w-1/2 rounded-lg mb-8 mx-auto" />
+            
+            {/* Form input and button */}
+            <div className="w-full flex flex-col sm:flex-row gap-3">
+              <Skeleton className="h-14 flex-1 rounded-xl" />
+              <Skeleton className="h-14 w-full sm:w-32 rounded-xl" />
+            </div>
+          </div>
+        </section>
+      </div>
+      <FooterSkeleton />
+    </main>
+  );
+}
+

@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Star, 
   Loader2, 
@@ -10,9 +11,21 @@ import {
   AlertCircle, 
   ThumbsUp, 
   ThumbsDown,
-  ExternalLink 
+  ExternalLink,
+  AlertTriangle,
+  HelpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+
+function normalizeUrl(urlStr: string): string {
+  try {
+    const url = new URL(urlStr);
+    return (url.hostname + url.pathname).replace(/\/$/, "").toLowerCase();
+  } catch (e) {
+    return urlStr.trim().replace(/\/$/, "").toLowerCase();
+  }
+}
 
 type Review = {
   id: string;
@@ -47,11 +60,16 @@ type AnalysisResult = {
 };
 
 export default function ProductAnalyzer() {
+  const router = useRouter();
   const [productUrl, setProductUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loadingStep, setLoadingStep] = useState(0);
+  
+  const [existingUrls, setExistingUrls] = useState<string[]>([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingUrl, setPendingUrl] = useState("");
 
   const loadingTexts = [
     "Contacting product database...",
@@ -61,11 +79,43 @@ export default function ProductAnalyzer() {
     "Finalizing report breakdown..."
   ];
 
+  useEffect(() => {
+    async function fetchHistory() {
+      try {
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const data = await res.json();
+          const urls = data.map((p: any) => p.productUrl).filter(Boolean);
+          setExistingUrls(urls);
+        }
+      } catch (err) {
+        console.error("Failed to load history", err);
+      }
+    }
+    fetchHistory();
+  }, []);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!productUrl.trim()) return;
+    const url = productUrl.trim();
+    if (!url) return;
 
+    // Check if URL was already searched
+    const isDuplicate = existingUrls.some(
+      (existing) => normalizeUrl(existing) === normalizeUrl(url)
+    );
+
+    if (isDuplicate) {
+      setPendingUrl(url);
+      setShowConfirmModal(true);
+      return; // Stop and show warning modal
+    }
+
+    await startAnalysis(url);
+  }
+
+  async function startAnalysis(url: string) {
     setIsLoading(true);
     setError(null);
     setResult(null);
@@ -82,7 +132,7 @@ export default function ProductAnalyzer() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productUrl }),
+        body: JSON.stringify({ productUrl: url }),
       });
 
       clearInterval(interval);
@@ -94,12 +144,38 @@ export default function ProductAnalyzer() {
 
       const data = await response.json();
       setResult(data);
+      
+      // Invalidate Next.js client-side router cache so when the user navigates
+      // back to the Dashboard, it fetches the newly added product from the server.
+      router.refresh();
+
+      // Add to session history
+      if (data.product?.productUrl) {
+        setExistingUrls((prev) => {
+          if (!prev.includes(data.product.productUrl)) {
+            return [...prev, data.product.productUrl];
+          }
+          return prev;
+        });
+      }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
       clearInterval(interval);
       setIsLoading(false);
     }
+  }
+
+  async function handleConfirmProceed() {
+    setShowConfirmModal(false);
+    const url = pendingUrl;
+    setPendingUrl("");
+    await startAnalysis(url);
+  }
+
+  function handleCancel() {
+    setShowConfirmModal(false);
+    setPendingUrl("");
   }
 
   return (
@@ -149,7 +225,9 @@ export default function ProductAnalyzer() {
       {/* Loading State Skeleton */}
       {isLoading && (
         <div className="w-full max-w-4xl p-8 rounded-3xl border border-[var(--rr-muted)]/15 bg-[var(--rr-surface)]/70 backdrop-blur-md shadow-lg flex flex-col items-center py-16 animate-pulse">
-          <Loader2 className="w-10 h-10 text-[var(--rr-accent)] animate-spin mb-4" />
+          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[var(--rr-accent)] to-indigo-500 opacity-80 animate-pulse mb-4 flex items-center justify-center shadow-lg shadow-[var(--rr-accent)]/25">
+            <div className="w-4 h-4 rounded-full bg-white animate-ping" />
+          </div>
           <h3 className="font-bold text-lg text-[var(--rr-text)] transition-all duration-300">
             {loadingTexts[loadingStep]}
           </h3>
@@ -377,6 +455,75 @@ export default function ProductAnalyzer() {
 
         </div>
       )}
+
+      {/* Already Searched Alert Modal */}
+      <AnimatePresence>
+        {showConfirmModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCancel}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1, 
+                y: 0,
+                rotate: [0, -1, 1, -1, 1, 0],
+              }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ 
+                type: "spring",
+                duration: 0.4,
+                bounce: 0.2,
+                rotate: { duration: 0.5, ease: "easeInOut" }
+              }}
+              className="relative w-full max-w-md overflow-hidden rounded-3xl border border-amber-500/20 bg-[var(--rr-surface)] p-6 shadow-2xl z-10"
+            >
+              {/* Decorative Warning glow */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="flex flex-col items-center text-center">
+                {/* Warning Icon Badge with pulse */}
+                <div className="relative mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                  <span className="absolute inset-0 animate-ping rounded-2xl bg-amber-500/10 opacity-75" />
+                  <AlertTriangle className="h-7 w-7" />
+                </div>
+
+                <h3 className="text-xl font-extrabold text-[var(--rr-text)] tracking-tight">
+                  Already Analyzed
+                </h3>
+                
+                <p className="mt-3 text-sm text-[var(--rr-muted)] leading-relaxed">
+                  This product link has already been analyzed and exists in your history. Proceeding will trigger a fresh analysis.
+                </p>
+
+                <div className="mt-6 flex w-full flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={handleCancel}
+                    className="flex-1 rounded-xl border border-[var(--rr-muted)]/15 px-4 py-3 text-sm font-semibold text-[var(--rr-text)] hover:bg-[var(--rr-bg)] transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmProceed}
+                    className="flex-1 rounded-xl bg-amber-500 px-4 py-3 text-sm font-bold text-white hover:bg-amber-600 active:scale-[0.98] transition-all shadow-md shadow-amber-500/20 cursor-pointer"
+                  >
+                    Yes, Proceed
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

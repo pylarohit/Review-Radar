@@ -1,5 +1,5 @@
-import AppPageLoading from "@/components/ui/AppPageLoading";
+import { ReviewPageSkeleton } from "@/components/ui/PageSkeletons";
 
 export default function HistoryLoading() {
-  return <AppPageLoading />;
+  return <ReviewPageSkeleton />;
 }
